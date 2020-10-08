@@ -1,0 +1,95 @@
+#include <iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+class EdgeClass{
+public:
+    int node1;
+    int node2;
+    int weight;
+    EdgeClass(int node1,int node2,int weight){
+        this->node1=node1;
+        this->node2=node2;
+        this->weight=weight;
+    }
+
+};
+
+int find_parent(int *parents,int start){
+    while(parents[start]!=start){
+        start=parents[start];
+    }
+    return start;
+}
+
+void kruskal_efficient(int nodes,int edges){
+    int*parents=new int[nodes];
+    for(int i=0;i<nodes;i++){
+        parents[i]=i;
+        
+    }
+
+   
+    
+    vector<EdgeClass*>values;
+    for(int i=0;i<edges;i++){
+        int node1;
+    //cout<<"give node1"<<endl;
+    cin>>node1;
+    int node2;
+    //cout<<"give node2"<<endl;
+    cin>>node2;
+    //cout<<"weight"<<endl;
+    int weight;
+    cin>>weight;
+    EdgeClass *obj=new EdgeClass(node1,node2,weight);
+    values.push_back(obj);
+    }
+    sort(values.begin(),values.end(), [ ]( const EdgeClass* lhs, const EdgeClass * rhs )
+    {
+        return lhs->weight<rhs->weight;
+    });
+    int min_path=0;
+    int count=0;
+
+    //cout<<endl;
+    vector<int>indices;
+    for(unsigned int i=0;i<values.size();i++){
+
+        if(find_parent(parents,values[i]->node1) !=find_parent(parents,values[i]->node2)){
+            min_path+=values[i]->weight;
+            indices.push_back(i);
+            int p1=find_parent(parents,values[i]->node1);
+            int p2=find_parent(parents,values[i]->node2);
+            parents[p1]=p2;
+            count++;
+            if(count>=nodes-1){break;}
+
+        }
+    }
+    
+    for(int i=0;i<indices.size();i++){
+        if(values[indices[i]]->node1 <=values[indices[i]]->node2){
+            cout<<values[indices[i]]->node1<<" "<<values[indices[i]]->node2<<" "<<values[indices[i]]->weight;
+        }
+        else{
+            cout<<values[indices[i]]->node2<<" "<<values[indices[i]]->node1<<" "<<values[indices[i]]->weight;
+        }
+        cout<<endl;
+    }
+    return;
+    //return min_path;
+}
+
+
+
+
+int main()
+{
+  int V, E, tempX, tempY;
+  cin >> V >> E;
+kruskal_efficient(V,E);
+
+
+  return 0;
+}
