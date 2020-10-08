@@ -1,0 +1,118 @@
+#include <iostream>
+#include<vector>
+#include<unordered_map>
+#include<climits>
+using namespace std;
+
+int** create_Weighted_Graph(int nodes,int ed){
+
+    int**adj=new int*[nodes];
+
+    for(int i=0;i<nodes;i++){
+        adj[i]=new int[ed];
+        for(int j=0;j<ed;j++){
+            adj[i][j]=0;
+        }
+    }
+    cout<<"-----now enter data for weighted undirected graph-----"<<endl;
+    cout<<"------------- "<<endl;
+    for(int i=0;i<ed;i++){
+        int node1;
+        int node2;
+        int weight;
+        cout<<"enter node 1"<<endl;
+        cin>>node1;
+        cout<<"enter node 2"<<endl;
+        cin>>node2;
+        cout<<"enter weight"<<endl;
+        cin>>weight;
+        adj[node1][node2]=weight;
+        adj[node2][node1]=weight;
+    }
+    return adj;
+}
+
+void prim_try(int nodes,int edges){
+    unordered_map<int,int>parent;
+    int start=0;
+    //start from no_zero
+    parent[start]=-1;
+    //int min_path_sum=0;
+    int count=0;
+    int *weight=new int [nodes];
+    for(int i=0;i<nodes;i++){
+        //assuming values in nodes are indexed values 0,1,2,...
+        if(i==start){
+            weight[i]=0;
+            continue;
+        }
+        weight[i]=INT_MAX;
+    }
+    int**adj=create_Weighted_Graph(nodes,edges);
+   
+    unordered_map<int,bool>visited;
+        //map filled indices to weights
+        //un_visited; i need it to extract elemts
+        vector<int>un_visited;
+    for(int i=0;i<nodes;i++){
+        un_visited.push_back(i);
+        visited[i]=false;
+        //assuming values in nodes are indexed values 0,1,2,...
+    }
+
+
+    //now to get weights that is too min weight from visited arrays
+
+    while(count<nodes-1){
+//pick up smallest weights form unvisited  //index
+        //go through all un_visited and have its wieght
+        int min_weight=INT_MAX;
+        int selected=-1;
+        int index=-1;
+        for(unsigned int j=0;j<un_visited.size();j++){
+            if(weight[un_visited[j]] <min_weight ){
+                selected=un_visited[j];
+                min_weight=weight[un_visited[j]];
+                index=j;
+            }
+        }
+        if(index!=-1){
+            un_visited.erase(un_visited.begin()+index);
+        }
+    //..
+        visited[selected]=true;
+        for(int i=0;i<nodes;i++){
+            if(adj[selected][i]!=0 && visited[i]==false ){
+                //updating weights
+                if(weight[i] > adj[selected][i]){
+                    //adjust parentse
+                    weight[i]=adj[selected][i];
+                    parent[i]=selected;
+                }
+
+
+            }
+
+        }
+
+
+        count++;
+    }
+        unordered_map<int,int>::iterator it=parent.begin();
+        for(;it!=parent.end();it++){
+            int node1=it->first;
+            int node2=it->second;
+            if(node1==start)continue;
+            int w=adj[node1][node2];
+            if(node1<=node2)cout<<node1<<" "<<node2<<" "<<w<<endl;
+            else{
+                cout<<node2<<" "<<node1<<" "<<w<<endl;
+            }
+        }
+}
+
+int main(){
+    int nodes,edges;
+    cin>>nodes>>edges;
+    prim_try(nodes,edges);
+}
