@@ -1,0 +1,109 @@
+#include <iostream>
+#include<vector>
+#include<algorithm>
+#include<climits>
+using namespace std;
+int** create_Weighted_Graph(int nodes,int ed){
+
+    int**adj=new int*[nodes];
+
+    for(int i=0;i<nodes;i++){
+        adj[i]=new int[ed];
+        for(int j=0;j<ed;j++){
+            adj[i][j]=0;
+        }
+    }
+    //cout<<"-----now enter data for weighted undirected graph-----"<<endl;
+    //cout<<"------------- "<<endl;
+    for(int i=0;i<ed;i++){
+        int node1;
+        int node2;
+        int weight;
+      // cout<<"enter node 1"<<endl;
+        cin>>node1;
+        //cout<<"enter node 2"<<endl;
+        cin>>node2;
+        //cout<<"enter weight"<<endl;
+        cin>>weight;
+        adj[node1][node2]=weight;
+        adj[node2][node1]=weight;
+    }
+    return adj;
+}
+
+
+void dijkstra_try(int nodes,int edges){
+
+    int start=0;
+    int*weights=new int[nodes];
+    for(int i=0;i<nodes;i++){
+        if(i==start){
+            weights[i]=0;
+            continue;
+        }
+        weights[i]=INT_MAX;
+    }
+    int**adj=create_Weighted_Graph(nodes,edges);
+    //this wiill contains min path value to reach from path to ith
+
+    bool*visited=new bool[nodes];
+    for(int i=0;i<nodes;i++){
+        visited[i]=false;
+    }
+    vector<int>un_visited;
+    for(int i=0;i<nodes;i++){
+        un_visited.push_back(i);
+    }
+    int count=0;
+
+    while(count<nodes){
+        count++;
+
+        int index=-1;
+
+       // cout<<un_visited[0]<<" here "<<endl;
+        //fetch minimum
+        for(int i=0;i<un_visited.size();i++){
+
+            if((index==-1) ||( weights[un_visited[index]]>weights[un_visited[i]] ) )
+               {
+
+                  index=i;
+            //    cout<<i<<" "<<index;
+            }
+        }
+            int store=un_visited[index];
+        //cout<<un_visited[index] <<" index "<<weights[index]<<endl;
+        visited[index]=true;
+        if(un_visited.size()!=0 && index!=-1)un_visited.erase(un_visited.begin()+index);
+
+
+            for(int i=0;i<un_visited.size();i++){
+
+            //    if(i==index)continue;
+            cout<<store<<" "<<un_visited[i]<<" "<<adj[store][un_visited[i]]<<endl;
+                if(adj[store][un_visited[i]]!=0){
+
+                    weights[un_visited[i]]=min(weights[un_visited[i]],weights[store]+adj[store][un_visited[i]]);
+
+                }
+            }
+
+    }
+
+    for(int i=0;i<nodes;i++){
+        cout<<i<<" "<<weights[i]<<endl;
+    }
+
+}
+
+int main()
+{
+  int V, E;//, tempX, tempY;
+  cin >> V >> E;
+	dijkstra_try(V,E);
+
+
+
+  return 0;
+}
